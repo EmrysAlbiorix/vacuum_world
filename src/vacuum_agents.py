@@ -39,7 +39,7 @@ def state_agent(dirty):
     error_check += 1
 
     # Switch to random movement if error threshold reached
-    if error_check >= 6:
+    if error_check >= 4:
         action = random.choice(directions)
         last_move = action
         moves_in_direction = 0
@@ -100,78 +100,8 @@ def state_agent_reset():
     moves_in_direction = 0
     error_check = 0
 
-# Alternate search method
-def state_agent_two(dirty):
-    global last_move, last_state, moves_in_direction, error_check, direction_sequence
-
-    # Clean if dirty
-    if dirty:
-        action = 'clean'
-        last_state = action
-        error_check = 0
-        return action
-
-    error_check += 1
-
-    # Switch to random movement if error threshold reached
-    if error_check >= 6:
-        action = random.choice(directions)
-        last_move = action
-        moves_in_direction = 0
-        # Optional: Reset error_check after some random moves
-        if random.random() < 0.1:  # 10% chance to reset error counter
-            error_check = 0
-        return action
-
-    # If we just cleaned, continue in same direction
-    if last_state == 'clean':
-        last_state = None
-        return last_move
-
-    # Spiral pattern: South -> East -> North -> West
-    # With increasing distance in each direction
-    moves_needed = (direction_sequence // 4) + 1  # Increase distance every full cycle
-
-    if last_move is None:
-        action = 'south'
-        last_move = action
-        moves_in_direction = 1
-        return action
-
-    if moves_in_direction >= moves_needed:
-        # Change direction and reset counter
-        direction_sequence = (direction_sequence + 1) % 16  # Complete pattern after 4 full cycles
-        moves_in_direction = 0
-
-        if direction_sequence % 4 == 0:
-            action = 'south'
-        elif direction_sequence % 4 == 1:
-            action = 'east'
-        elif direction_sequence % 4 == 2:
-            action = 'north'
-        else:
-            action = 'west'
-
-        last_move = action
-        return action
-
-    moves_in_direction += 1
-    return last_move
-
-# Reset the globals for state_agent2
-def state_agent_reset_two():
-    global last_move, last_state, moves_in_direction, error_check, direction_sequence
-    last_state = None
-    last_move = None
-    moves_in_direction = 0
-    error_check = 0
-    direction_sequence = 0
-
 #run(20, 5000, random_agent)
 #print(many_runs(20, 50000, 10, random_agent))
 
 #run(20, 50000, state_agent, state_agent_reset)
-#print(many_runs(20, 50000, 10, state_agent, state_agent_reset))
-
-run(20, 50000, state_agent_two, state_agent_reset_two)
-#print(many_runs(20, 50000, 10, state_agent_two, state_agent_reset_two))
+print(many_runs(20, 50000, 10, state_agent, state_agent_reset))
